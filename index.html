@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EcoPulse Urbano | Monitoramento de Qualidade do Ar e Ruído</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="chart.js"></script>
+</head>
+
+<body>
+    <!-- Cabeçalho e Navegação -->
+    <header class="navbar">
+        <div class="container nav-content">
+            <div class="brand">
+                <svg width="34" height="34" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+          <circle cx="18" cy="18" r="17" fill="#0D9488" />
+          <path d="M8 20H13L16 12L20 25L23 17H28" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+                <span>EcoPulse <strong>Urbano</strong></span>
+            </div>
+            <nav>
+                <a href="#monitoramento">Painel ao Vivo</a>
+                <a href="#sobre">A Empresa</a>
+                <a href="#produtos">Produtos & ESG</a>
+                <a href="#equipe">Equipe</a>
+                <a href="#contato" class="btn-nav">Solicitar Estação</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="hero">
+        <div class="container hero-grid">
+            <div>
+                <span class="badge">Dados Abertos Comunitários + Transparência ESG</span>
+                <h1>Qualidade do ar e ruído urbano monitorados em tempo real no seu bairro.</h1>
+                <p>
+                    Conectamos estações IoT de alta precisão a associações de moradores, órgãos públicos e empresas locais comprometidas com cidades mais saudáveis e silenciosas.
+                </p>
+                <div class="hero-actions">
+                    <a href="#monitoramento" class="btn-primary">Consultar Índices do Bairro</a>
+                    <a href="#contato" class="btn-secondary">Patrocinar Estação ESG</a>
+                </div>
+            </div>
+            <div class="hero-card-visual">
+                <!-- Ilustração Vetorial da Estação IoT EcoPulse -->
+                <svg viewBox="0 0 320 240" class="station-svg" role="img" aria-label="Ilustração da Estação IoT EcoPulse">
+          <rect x="20" y="20" width="280" height="200" rx="16" fill="#0F172A" />
+          <rect x="152" y="95" width="16" height="110" fill="#64748B" />
+          <polygon points="115,38 205,38 190,62 130,62" fill="#0284C7" stroke="#38BDF8" stroke-width="2"/>
+          <rect x="122" y="68" width="76" height="64" rx="10" fill="#F8FAFC" stroke="#0D9488" stroke-width="3"/>
+          <circle cx="144" cy="92" r="6" fill="#10B981" />
+          <circle cx="160" cy="92" r="6" fill="#F59E0B" />
+          <circle cx="176" cy="92" r="6" fill="#64748B" />
+          <rect x="134" y="108" width="52" height="12" rx="4" fill="#CBD5E1" />
+          <path d="M212 78 C226 88, 226 112, 212 122" stroke="#2DD4BF" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M224 70 C244 86, 244 114, 224 130" stroke="#2DD4BF" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <text x="160" y="214" text-anchor="middle" fill="#94A3B8" font-size="11" font-family="sans-serif">ESTAÇÃO ECOPULSE NODE v1.0 • SOLAR + MQTT</text>
+        </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- Painel Público de Monitoramento (Consumo de API REST + Séries Temporais) -->
+    <section id="monitoramento" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Monitoramento Ambiental em Tempo Real (API REST)</h2>
+                <p>Selecione uma estação instalada para consultar o histórico de séries temporais armazenado em nuvem.</p>
+            </div>
+
+            <div class="filter-bar">
+                <label for="stationSelect"><strong>Estação / Bairro:</strong></label>
+                <select id="stationSelect">
+          <option value="EP-SP-VM01">EP-SP-VM01 — Vila Mariana (Praça da Árvore)</option>
+          <option value="EP-SP-PI02">EP-SP-PI02 — Pinheiros (Largo da Batata)</option>
+          <option value="EP-SP-IT03">EP-SP-IT03 — Itaquera (Av. José Pinheiro Borges)</option>
+        </select>
+                <span id="sponsorBadge" class="sponsor-tag">Patrocínio ESG: Padaria Artesanal Sol</span>
+            </div>
+
+            <!-- Cards de Telemetria Atual -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <span class="kpi-title">Índice Qualidade do Ar (IQAr)</span>
+                    <strong id="kpiIqar" class="kpi-value status-good">32 — Boa</strong>
+                    <small>Padrão CETESB / OMS</small>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-title">Material Particulado (PM2.5)</span>
+                    <strong id="kpiPm25" class="kpi-value">14.2 µg/m³</strong>
+                    <small>Limite diário OMS: 15 µg/m³</small>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-title">Dióxido de Carbono (CO₂ eq.)</span>
+                    <strong id="kpiCo2" class="kpi-value">438 ppm</strong>
+                    <small>Sensor MQ-135 calibrado</small>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-title">Ruído Urbano Médio</span>
+                    <strong id="kpiNoise" class="kpi-value">54.8 dB(A)</strong>
+                    <small>Limite diurno NBR 10151: 55 dB</small>
+                </div>
+            </div>
+
+            <!-- Gráficos de Séries Temporais -->
+            <div class="charts-grid">
+                <div class="chart-box">
+                    <h3>Série Temporal: Material Particulado PM2.5 (µg/m³) — Últimas 24h</h3>
+                    <canvas id="airChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3>Série Temporal: Pressão Sonora Urbana dB(A) — Últimas 24h</h3>
+                    <canvas id="noiseChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Histórico da Empresa -->
+    <section id="sobre" class="section bg-light">
+        <div class="container two-col">
+            <div>
+                <h2>História da EcoPulse Urbano</h2>
+                <p>
+                    Fundada em 2026 em São Paulo por estudantes de Tecnologia da Informação da UNINOVE, a <strong>EcoPulse Monitoramento Ambiental e Tecnologia Ltda.</strong> surgiu com o propósito de preencher o vazio de dados ambientais hiperlocais
+                    nas periferias e centros comerciais da metrópole.
+                </p>
+                <p>
+                    Enquanto redes governamentais possuem poucas estações distantes entre si, nossas estações IoT autônomas medem continuamente partículas finas (PM2.5), gases poluentes (MQ-135) e decibéis urbanos, entregando relatórios transparentes para associações de
+                    moradores e subprefeituras.
+                </p>
+            </div>
+            <div class="mvv-box">
+                <div class="mvv-item">
+                    <h3>Missão</h3>
+                    <p>Democratizar dados ambientais urbanos em tempo real, unindo tecnologia IoT acessível, participação cidadã e responsabilidade corporativa ESG.</p>
+                </div>
+                <div class="mvv-item">
+                    <h3>Visão</h3>
+                    <p>Ser até 2030 a maior rede colaborativa de inteligência ambiental hiperlocal do Brasil.</p>
+                </div>
+                <div class="mvv-item">
+                    <h3>Valores</h3>
+                    <p>Transparência de dados abertos, privacidade (LGPD — sem gravação de voz), rigor técnico e impacto socioambiental.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Produtos e Serviços -->
+    <section id="produtos" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Produtos e Serviços</h2>
+                <p>Soluções integradas de hardware embarcado, nuvem e certificação socioambiental.</p>
+            </div>
+            <div class="cards-3">
+                <article class="product-card">
+                    <div class="product-icon">📡</div>
+                    <h3>Estação IoT EcoPulse Node v1.0</h3>
+                    <p>Unidade autônoma com microcontrolador ESP32, sensores PM2.5, MQ-135, microfone decibelímetro calibrado, painel solar e transmissão MQTT em nuvem.</p>
+                </article>
+                <article class="product-card">
+                    <div class="product-icon">📊</div>
+                    <h3>Portal Comunitário & API Aberta</h3>
+                    <p>Plataforma gratuita para associações de moradores e órgãos públicos consultarem séries históricas, mapas de calor e alertas de poluição atmosférica e sonora.</p>
+                </article>
+                <article class="product-card">
+                    <div class="product-icon">🌿</div>
+                    <h3>Selo Bairro Transparente (ESG)</h3>
+                    <p>Programa de patrocínio para empresas locais financiarem estações no entorno, recebendo relatórios auditáveis de sustentabilidade e certificação ESG.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Equipe de Desenvolvimento -->
+    <section id="equipe" class="section bg-light">
+        <div class="container">
+            <div class="section-header">
+                <h2>Equipe de Desenvolvimento</h2>
+                <p>Time multidisciplinar responsável pela engenharia de hardware, nuvem e impacto social.</p>
+            </div>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="avatar">AP</div>
+                    <h4>Andressa Pereira</h4>
+                    <span>Arquiteto de Hardware & IoT</span>
+                </div>
+                <div class="team-card">
+                    <div class="avatar">GL</div>
+                    <h4>Gabriel Lima</h4>
+                    <span>Engenheiro de Cloud & Séries Temporais</span>
+                </div>
+                <div class="team-card">
+                    <div class="avatar">TA</div>
+                    <h4>Thiago Augusto</h4>
+                    <span>Desenvolvedor Back-End & API REST</span>
+                </div>
+                <div class="team-card">
+                    <div class="avatar">AP</div>
+                    <h4>Andressa Pereira</h4>
+                    <span>Desenvolvedor Front-End & UX</span>
+                </div>
+                <div class="team-card">
+                    <div class="avatar">SA</div>
+                    <h4>Stephane Ariane Silva</h4>
+                    <span>Analista de Dados Ambientais & ESG</span>
+                </div>
+                <div class="team-card">
+                    <div class="avatar">AP</div>
+                    <h4>Andressa Pereira</h4>
+                    <span>Gestor de Produto & Articulação Comunitária</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Formulário de Contato com Consulta de CEP (API ViaCEP) -->
+    <section id="contato" class="section">
+        <div class="container contact-wrapper">
+            <div class="section-header">
+                <h2>Indique um Ponto Crítico ou Seja Patrocinador ESG</h2>
+                <p>Preencha o formulário abaixo. Digite o CEP para preenchimento automático do endereço via API ViaCEP.</p>
+            </div>
+            <form id="contactForm" class="contact-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome Completo / Razão Social *</label>
+                        <input type="text" id="nome" required placeholder="Ex.: Associação de Moradores Vila Mariana" />
+                    </div>
+                    <div class="form-group">
+                        <label for="perfil">Perfil de Solicitação *</label>
+                        <select id="perfil" required>
+              <option value="comunidade">Associação de Moradores / Cidadão (Ponto Crítico)</option>
+              <option value="empresa_esg">Empresa Local (Patrocínio ESG)</option>
+              <option value="orgao_publico">Órgão Público / Subprefeitura</option>
+            </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">E-mail de Contato *</label>
+                        <input type="email" id="email" required placeholder="contato@exemplo.com.br" />
+                    </div>
+                    <div class="form-group">
+                        <label for="cep">CEP do Local de Instalação * <small id="cepStatus"></small></label>
+                        <input type="text" id="cep" maxlength="9" required placeholder="00000-000" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="logradouro">Logradouro</label>
+                        <input type="text" id="logradouro" readonly placeholder="Preenchido automaticamente pelo CEP" />
+                    </div>
+                    <div class="form-group">
+                        <label for="bairro">Bairro</label>
+                        <input type="text" id="bairro" readonly placeholder="Bairro" />
+                    </div>
+                    <div class="form-group">
+                        <label for="cidade">Cidade / UF</label>
+                        <input type="text" id="cidade" readonly placeholder="Cidade - UF" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="mensagem">Descrição da Demanda Ambiental</label>
+                    <textarea id="mensagem" rows="3" placeholder="Relate problemas de tráfego intenso, poeira de obras, ruído noturno ou interesse no Selo ESG..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary">Enviar Solicitação</button>
+                <p id="formFeedback" class="feedback-msg"></p>
+            </form>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 EcoPulse Monitoramento Ambiental e Tecnologia Ltda. — Projeto de Extensão em Empreendedorismo (UNINOVE).</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
