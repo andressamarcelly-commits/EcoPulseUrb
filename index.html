@@ -247,12 +247,7 @@
                         <label for="email">E-mail de Contato *</label>
                         <input type="email" id="email" required placeholder="contato@exemplo.com.br" />
                     </div>
-                    <div class="form-group">
-                        <label for="cep">CEP do Local de Instalação * <small id="cepStatus"></small></label>
-                        <input type="text" id="cep" maxlength="9" required placeholder="00000-000" />
-                    </div>
-                </div>
-
+                    
               <html>
     <head>
     <title>ViaCEP Webservice</title>
@@ -260,8 +255,13 @@
 
     <!-- Adicionando Javascript -->
     <script>
-    
-    function limpa_formulário_cep() {
+        <div class="form-group">
+                        <label for="cep">CEP do Local de Instalação * <small id="cepStatus"></small></label>
+                        <input type="text" id="cep" maxlength="8" required placeholder="00000000" />
+                    </div>
+                </div>
+
+        function limpa_formulário_cep() {
             //Limpa valores do formulário de cep.
             document.getElementById('rua').value=("");
             document.getElementById('bairro').value=("");
